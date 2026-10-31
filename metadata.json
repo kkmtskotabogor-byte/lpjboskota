@@ -1,0 +1,6 @@
+{
+  "name": "SiLPJ BOS — Sistem Laporan Pertanggungjawaban Dana BOS",
+  "description": "Aplikasi penyusunan Laporan Pertanggungjawaban (LPJ) Dana BOS meliputi impor anggaran Excel, Buku Kas Umum (BKU), Kwitansi otomatis, Daftar Penerimaan Honor, validasi data otomatis, dan ekspor PDF siap cetak.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

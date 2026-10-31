@@ -38,7 +38,6 @@ export async function parseBudgetExcelFile(file: File): Promise<ExcelParseResult
   const sheet = workbook.Sheets[sheetName];
   const rawRows = XLSX.utils.sheet_to_json<unknown[]>(sheet, { header: 1, defval: '' });
 
-  // Locate header row containing "Uraian" or "Tri Wulan"
   let headerRowIdx = -1;
   let colMap = {
     no: 0,
@@ -106,7 +105,6 @@ export async function parseBudgetExcelFile(file: File): Promise<ExcelParseResult
     if (!uraian) continue;
 
     const lowerUraian = uraian.toLowerCase();
-    // Skip summary / total footer row ("JUMLAH BOS", "TOTAL", etc.)
     if (
       lowerUraian.startsWith('jumlah bos') ||
       lowerUraian === 'jumlah' ||
@@ -116,7 +114,6 @@ export async function parseBudgetExcelFile(file: File): Promise<ExcelParseResult
       continue;
     }
 
-    // Detect parent category row: either has a category number in `No.` AND (`subTotalVal > 0` or `jumlahVal === 0` with no TW values)
     const sumTw = tw1 + tw2 + tw3 + tw4;
     const isParentCategory =
       (rawNo !== '' && subTotalVal > 0 && jumlahVal === 0 && sumTw === 0) ||
@@ -129,7 +126,6 @@ export async function parseBudgetExcelFile(file: File): Promise<ExcelParseResult
       continue;
     }
 
-    // Regular sub-activity item row
     const finalJumlah = jumlahVal > 0 ? jumlahVal : sumTw;
     items.push({
       id: `imp-${Date.now()}-${r}`,
@@ -175,7 +171,6 @@ export function exportBudgetTemplateExcel(
 ): void {
   const wb = XLSX.utils.book_new();
 
-  // Sheet 1: Exact 9-Column Format matching user's uploaded Excel
   const anggaranRows: (string | number)[][] = [
     [
       'No.',
@@ -190,7 +185,6 @@ export function exportBudgetTemplateExcel(
     ],
   ];
 
-  // Group items by categoryNo + categoryName preserving order
   const groups: { no: string; name: string; rows: BudgetItem[] }[] = [];
   items.forEach((item) => {
     const existing = groups.find((g) => g.no === item.categoryNo && g.name === item.categoryName);
@@ -252,7 +246,6 @@ export function exportBudgetTemplateExcel(
   ];
   XLSX.utils.book_append_sheet(wb, wsAnggaran, 'Anggaran BOS');
 
-  // Sheet 2: Buku Kas Umum (BKU)
   const sortedTx = [...transactions].sort((a, b) => a.tanggal.localeCompare(b.tanggal));
   let saldo = 0;
   const bkuRows: (string | number)[][] = [
@@ -304,7 +297,6 @@ export function exportBudgetTemplateExcel(
   ];
   XLSX.utils.book_append_sheet(wb, wsBku, 'Buku Kas Umum');
 
-  // Sheet 3: Daftar Penerimaan Honor
   const honorRows: (string | number)[][] = [
     [`DAFTAR PENERIMAAN HONORARIUM — ${school.namaSekolah.toUpperCase()}`],
     [

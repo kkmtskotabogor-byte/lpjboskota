@@ -73,7 +73,6 @@ export const ValidasiModule: React.FC<ValidasiModuleProps> = ({
         </div>
       </div>
 
-      {/* Summary Counts */}
       <div className="bg-white border border-slate-200 rounded-xl grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-200">
         <div className="p-4 flex items-center gap-3">
           <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
@@ -104,7 +103,6 @@ export const ValidasiModule: React.FC<ValidasiModuleProps> = ({
         </div>
       </div>
 
-      {/* Audit List */}
       <section className="bg-white border border-slate-200 rounded-xl divide-y divide-slate-200">
         {visible.map((issue) => (
           <div

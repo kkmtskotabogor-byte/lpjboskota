@@ -78,7 +78,6 @@ export const HonorModule: React.FC<HonorModuleProps> = ({
     });
   }, [honorRecipients, selectedItemId, twFilter]);
 
-  // Calculate target BKU / Pagu total for the currently filtered Honor selection
   const targetPaguHonor = useMemo(() => {
     const relevantItems =
       selectedItemId === 'all'
@@ -174,7 +173,6 @@ export const HonorModule: React.FC<HonorModuleProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pb-5 border-b border-slate-200">
         <div>
           <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
@@ -207,7 +205,6 @@ export const HonorModule: React.FC<HonorModuleProps> = ({
         </div>
       </div>
 
-      {/* Reconciliation Strip */}
       <div className="bg-white border border-slate-200 rounded-xl grid grid-cols-1 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200">
         <div className="p-4">
           <div className="text-xs text-slate-500">Target Pagu / Kwitansi BKU</div>
@@ -252,7 +249,6 @@ export const HonorModule: React.FC<HonorModuleProps> = ({
         </div>
       </div>
 
-      {/* Add / Edit Recipient Form */}
       {isFormOpen && (
         <form
           onSubmit={handleSubmit}
@@ -431,7 +427,6 @@ export const HonorModule: React.FC<HonorModuleProps> = ({
         </form>
       )}
 
-      {/* Filter Controls */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
           <label className="text-xs font-medium text-slate-600">Pilih Jenis Honor:</label>
@@ -467,7 +462,6 @@ export const HonorModule: React.FC<HonorModuleProps> = ({
         </div>
       </div>
 
-      {/* Honorarium Signature Table */}
       <section className="bg-white border border-slate-200 rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-xs border-collapse">
@@ -490,7 +484,7 @@ export const HonorModule: React.FC<HonorModuleProps> = ({
               {visibleRecipients.length === 0 ? (
                 <tr>
                   <td colSpan={11} className="py-10 text-center text-slate-500">
-                    Tidak ada daftar penerima honor pada kombinasi kegiatan dan Triwulan ini (alokasi pagu Rp 0 pada Triwulan terpilih).
+                    Tidak ada daftar penerima honor pada kombinasi kegiatan dan Triwulan ini.
                   </td>
                 </tr>
               ) : (

@@ -78,7 +78,6 @@ export const RingkasanDashboard: React.FC<RingkasanDashboardProps> = ({
   const errorCount = validationIssues.filter((v) => v.severity === 'error').length;
   const warningCount = validationIssues.filter((v) => v.severity === 'warning').length;
 
-  // Category aggregation matching Excel Pie Chart
   const categoryMap = new Map<string, { no: string; name: string; total: number }>();
   budgetItems.forEach((item) => {
     const key = `${item.categoryNo}-${item.categoryName}`;
@@ -97,7 +96,6 @@ export const RingkasanDashboard: React.FC<RingkasanDashboardProps> = ({
   const categories = Array.from(categoryMap.values());
   const chartSum = categories.reduce((s, c) => s + c.total, 0);
 
-  // Build SVG Donut segments
   let cumulativeAngle = 0;
   const donutSegments = categories.map((cat, idx) => {
     const fraction = chartSum > 0 ? cat.total / chartSum : 0;
@@ -119,7 +117,6 @@ export const RingkasanDashboard: React.FC<RingkasanDashboardProps> = ({
     };
   });
 
-  // Quarterly Pagu vs Realisasi breakdown
   const quarterlyStats = ([1, 2, 3, 4] as const).map((tw) => {
     const key = `tw${tw}` as 'tw1' | 'tw2' | 'tw3' | 'tw4';
     const pagu = budgetItems.reduce((s, i) => s + i[key], 0);
@@ -136,7 +133,6 @@ export const RingkasanDashboard: React.FC<RingkasanDashboardProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Period Selector & Context Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pb-5 border-b border-slate-200">
         <div>
           <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
@@ -151,7 +147,6 @@ export const RingkasanDashboard: React.FC<RingkasanDashboardProps> = ({
           </div>
         </div>
 
-        {/* Interactive Filter Control */}
         <div className="flex items-center gap-1 p-1 bg-slate-200/70 rounded-lg self-start">
           {(['all', 1, 2, 3, 4] as TriwulanFilter[]).map((tw) => (
             <button
@@ -170,7 +165,6 @@ export const RingkasanDashboard: React.FC<RingkasanDashboardProps> = ({
         </div>
       </div>
 
-      {/* 4-Column Metric Strip (Single-Elevation Surface with Hairline Dividers) */}
       <section className="bg-white border border-slate-200 rounded-xl grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200">
         <div className="p-5">
           <p className="text-xs font-medium text-slate-500">
@@ -253,9 +247,7 @@ export const RingkasanDashboard: React.FC<RingkasanDashboardProps> = ({
         </div>
       </section>
 
-      {/* Main Analytics Split: Category Proportion (Matching Excel Pie Chart) + Quarterly Pagu vs Realisasi */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-        {/* Proporsi Anggaran per Sub Kegiatan */}
         <section className="lg:col-span-6 bg-white border border-slate-200 rounded-xl p-6 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between gap-4">
@@ -351,7 +343,6 @@ export const RingkasanDashboard: React.FC<RingkasanDashboardProps> = ({
           </div>
         </section>
 
-        {/* Pagu vs Realisasi Triwulan 1–4 */}
         <section className="lg:col-span-6 bg-white border border-slate-200 rounded-xl p-6 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between gap-4">
@@ -435,7 +426,6 @@ export const RingkasanDashboard: React.FC<RingkasanDashboardProps> = ({
         </section>
       </div>
 
-      {/* Formal PDF & Excel Document Export Bar */}
       <section className="bg-white border border-slate-200 rounded-xl p-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-5 border-b border-slate-200">
           <div>

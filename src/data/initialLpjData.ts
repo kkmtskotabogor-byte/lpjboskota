@@ -20,15 +20,6 @@ export const INITIAL_SCHOOL_PROFILE: SchoolProfile = {
   tanggalLaporanTw4: '2026-12-29',
 };
 
-/**
- * Exact 17 budget items transcribed from the uploaded Excel screenshot (/public/assets/aistudio/image_719496df.png):
- * 1. Honor = Rp 60.852.000
- * 2. Kegiatan = Rp 12.850.000
- * 3. Operasional Sekolah = Rp 3.600.000
- * 4. pemenuhan sarana prasarana = Rp 35.948.000
- * JUMLAH BOS = Rp 113.250.000
- * TW1 = 25.883.600 | TW2 = 29.274.200 | TW3 = 36.083.600 | TW4 = 22.008.600
- */
 export const INITIAL_BUDGET_ITEMS: BudgetItem[] = [
   // 1. Honor (60.852.000)
   {
@@ -409,7 +400,6 @@ export function generateBkuAndHonorFromBudget(
 
       voucherSeq += 1;
 
-      // Populate structured Honor Recipient Rows if item belongs to Honorarium
       if (isHonorCategory(item)) {
         const ur = item.uraian.toLowerCase();
         if (ur.includes('honor guru') && amount === 4_050_000) {
@@ -484,7 +474,6 @@ export function generateBkuAndHonorFromBudget(
             jumlahNetto: amount,
           });
         } else if (ur.includes('koreksi') && amount === 7_038_000) {
-          // 17 Mapel x 414 Siswa = 7.038 LJK @ Rp 1.000 = Rp 7.038.000 distributed across 9 teachers (8 teachers x 2 mapel = 828 LJK, 1 teacher x 1 mapel = 414 LJK)
           GURU_HONOR_NAMES.forEach((guru, idx) => {
             const mapelCount = idx < 8 ? 2 : 1;
             const ljkCount = 414 * mapelCount;
@@ -506,7 +495,6 @@ export function generateBkuAndHonorFromBudget(
             });
           });
         } else if (ur.includes('pembuatan soal') && amount === 2_550_000) {
-          // 17 Mapel x 3 Angkatan = 51 Paket Naskah @ Rp 50.000 = Rp 2.550.000 distributed across 9 teachers (8 teachers x 6 naskah, 1 teacher x 3 naskah = 51 naskah)
           GURU_HONOR_NAMES.forEach((guru, idx) => {
             const mapelCount = idx < 8 ? 2 : 1;
             const naskahCount = mapelCount * 3;
@@ -528,7 +516,6 @@ export function generateBkuAndHonorFromBudget(
             });
           });
         } else {
-          // Generic fallback for any custom uploaded Excel honor row
           honorRecipients.push({
             id: `hon-${item.id}-tw${tw}-1`,
             budgetItemId: item.id,

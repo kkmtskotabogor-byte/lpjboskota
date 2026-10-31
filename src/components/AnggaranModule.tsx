@@ -3,8 +3,6 @@ import {
   AlertCircle,
   CheckCircle2,
   Download,
-  Eye,
-  EyeOff,
   FileSpreadsheet,
   FileText,
   Pencil,
@@ -46,8 +44,6 @@ export const AnggaranModule: React.FC<AnggaranModuleProps> = ({
   onExportTemplateExcel,
 }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [showSourceImage, setShowSourceImage] = useState(false);
-  const [imgError, setImgError] = useState(false);
   const [autoSyncOnImport, setAutoSyncOnImport] = useState(true);
   const [importFeedback, setImportFeedback] = useState<{
     type: 'success' | 'error';
@@ -132,7 +128,6 @@ export const AnggaranModule: React.FC<AnggaranModuleProps> = ({
     );
   };
 
-  // Group budget items by category
   const groups: { no: string; name: string; rows: BudgetItem[] }[] = [];
   budgetItems.forEach((item) => {
     const existing = groups.find(
@@ -150,7 +145,6 @@ export const AnggaranModule: React.FC<AnggaranModuleProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Header & Actions */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pb-5 border-b border-slate-200">
         <div>
           <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
@@ -162,15 +156,6 @@ export const AnggaranModule: React.FC<AnggaranModuleProps> = ({
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
-          <button
-            type="button"
-            onClick={() => setShowSourceImage((prev) => !prev)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap shrink-0"
-          >
-            {showSourceImage ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-            {showSourceImage ? 'Tutup Referensi Unggahan' : 'Lihat Referensi Excel Asli'}
-          </button>
-
           <button
             type="button"
             onClick={onExportTemplateExcel}
@@ -191,38 +176,6 @@ export const AnggaranModule: React.FC<AnggaranModuleProps> = ({
         </div>
       </div>
 
-      {/* Collapsible Uploaded Excel Reference Preview */}
-      {showSourceImage && (
-        <section className="bg-white border border-slate-200 rounded-xl p-5">
-          <div className="flex items-center justify-between mb-3">
-            <div>
-              <h2 className="text-sm font-semibold text-slate-900">
-                Pratinjau Dokumen Anggaran yang Diunggah ke Sistem
-              </h2>
-              <p className="text-xs text-slate-500">
-                 Seluruh 4 kategori utama, 17 rincian kegiatan, dan distribusi Triwulan 1–4 (Rp 113.250.000) telah dipetakan ke tabel kerja di bawah.
-              </p>
-            </div>
-          </div>
-          {!imgError ? (
-            <div className="overflow-x-auto border border-slate-200 rounded-lg bg-slate-50 p-2">
-              <img
-                src="/assets/aistudio/image_719496df.png"
-                alt="Tabel Anggaran BOS dari file Excel yang diunggah"
-                referrerPolicy="no-referrer"
-                onError={() => setImgError(true)}
-                className="max-w-full h-auto rounded"
-              />
-            </div>
-          ) : (
-            <div className="p-6 bg-slate-50 border border-slate-200 rounded-lg text-center text-xs text-slate-600">
-              Data sumber anggaran (Total Pagu Rp 113.250.000) aktif di dalam tabel rincian anggaran di bawah.
-            </div>
-          )}
-        </section>
-      )}
-
-      {/* Excel Upload & Auto-Sync Control Bar */}
       <section className="bg-white border border-slate-200 rounded-xl p-5">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
@@ -299,7 +252,6 @@ export const AnggaranModule: React.FC<AnggaranModuleProps> = ({
         )}
       </section>
 
-      {/* Add / Edit Inline Panel */}
       {(isAddingNew || editingItem) && (
         <form
           onSubmit={handleSaveForm}
@@ -423,7 +375,6 @@ export const AnggaranModule: React.FC<AnggaranModuleProps> = ({
         </form>
       )}
 
-      {/* Exact 9-Column Hierarchical Budget Table */}
       <section className="bg-white border border-slate-200 rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-xs border-collapse">
@@ -446,7 +397,6 @@ export const AnggaranModule: React.FC<AnggaranModuleProps> = ({
                 const subTotal = grp.rows.reduce((s, r) => s + r.jumlah, 0);
                 return (
                   <React.Fragment key={`${grp.no}-${grp.name}`}>
-                    {/* Category Header Row matching blue-tinted Excel Sub-Kegiatan band */}
                     <tr className="bg-blue-50/60 font-semibold text-slate-900">
                       <td className="py-2.5 px-3 text-center font-mono">{grp.no}.</td>
                       <td className="py-2.5 px-4 capitalize">{grp.name}</td>

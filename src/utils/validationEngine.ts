@@ -12,25 +12,16 @@ function isHonorItem(item: BudgetItem): boolean {
   );
 }
 
-/**
- * Evaluates multiplication expressions inside the Excel `keterangan` string, e.g.:
- * - "Rp.185.000 x12 Bulan" -> 185000 * 12 = 2.220.000 (detects mismatch with 2.400.000!)
- * - "Rp.1.000 x 414 Siswa X 17 Mapel x 2 semster" -> 14.076.000 (matches!)
- * - "Rp.150.000 x9 guru" -> 1.350.000/month * 12 = 16.200.000 (matches!)
- * - "Rp.50.000 x 17 Mapel X 3 Angkatan" -> 2.550.000/semester * 2 = 5.100.000 (matches!)
- */
 function checkKeteranganFormula(item: BudgetItem): { mismatch: boolean; computed?: number; note?: string } {
   const ket = item.keterangan.trim();
   if (!ket || item.jumlah <= 0) return { mismatch: false };
 
-  // Extract explicit Rp nominal if present
   const rpMatch = ket.match(/rp\.?\s*([\d.]+)/i);
   if (!rpMatch) return { mismatch: false };
 
   const unitRp = parseInt(rpMatch[1].replace(/\./g, ''), 10);
   if (!Number.isFinite(unitRp) || unitRp <= 0) return { mismatch: false };
 
-  // Find all "x <number>" multipliers after Rp
   const afterRp = ket.slice((rpMatch.index || 0) + rpMatch[0].length);
   const multMatches = [...afterRp.matchAll(/[xX×]\s*(\d+)/g)];
   if (multMatches.length === 0) return { mismatch: false };
@@ -38,7 +29,6 @@ function checkKeteranganFormula(item: BudgetItem): { mismatch: boolean; computed
   const factors = multMatches.map((m) => parseInt(m[1], 10)).filter((n) => Number.isFinite(n) && n > 0);
   const directProduct = factors.reduce((acc, n) => acc * n, unitRp);
 
-  // Exact match, or monthly x 12 match, or semester x 2 match
   if (
     directProduct === item.jumlah ||
     directProduct * 12 === item.jumlah ||
@@ -62,7 +52,6 @@ export function runAutomaticValidation(
 ): ValidationIssue[] {
   const issues: ValidationIssue[] = [];
 
-  // 1. Validate Pagu vs Triwulan 1–4 distribution per item + Keterangan formula + Zero items
   let allTwBalanced = true;
   budgetItems.forEach((item) => {
     const sumTw = item.tw1 + item.tw2 + item.tw3 + item.tw4;
@@ -83,7 +72,6 @@ export function runAutomaticValidation(
       });
     }
 
-    // Check formula in keterangan
     const formulaAudit = checkKeteranganFormula(item);
     if (formulaAudit.mismatch && formulaAudit.note) {
       const monthlySuggested = Math.round(item.jumlah / 12);
@@ -105,7 +93,6 @@ export function runAutomaticValidation(
       });
     }
 
-    // Check zero-budget placeholder rows from Excel (e.g. Pembelian Printer, Pembelian Proyektor)
     if (item.jumlah === 0 && sumTw === 0) {
       issues.push({
         id: `val-zero-${item.id}`,
@@ -134,7 +121,6 @@ export function runAutomaticValidation(
     });
   }
 
-  // 2. Validate BKU Running Balance (Anti-Minus Cash Check) & Triwulan Reconciliation
   const sortedTx = [...transactions].sort((a, b) => {
     const cmp = a.tanggal.localeCompare(b.tanggal);
     if (cmp !== 0) return cmp;
@@ -170,7 +156,6 @@ export function runAutomaticValidation(
     });
   }
 
-  // 3. Validate Realisasi Pengeluaran BKU vs Pagu Anggaran per Item & Triwulan
   let bkuVsPaguMismatch = false;
   budgetItems.forEach((item) => {
     if (item.jumlah === 0) return;
@@ -233,7 +218,6 @@ export function runAutomaticValidation(
     });
   }
 
-  // 4. Validate Kwitansi Completeness
   const pengeluaranTx = transactions.filter((t) => t.jenis === 'pengeluaran');
   let kwitansiIncomplete = false;
   pengeluaranTx.forEach((tx) => {
@@ -261,7 +245,6 @@ export function runAutomaticValidation(
     });
   }
 
-  // 5. Validate Daftar Penerimaan Honor vs Anggaran/BKU Honor
   let honorMismatch = false;
   budgetItems.filter(isHonorItem).forEach((item) => {
     const twMap: Record<Triwulan, number> = {

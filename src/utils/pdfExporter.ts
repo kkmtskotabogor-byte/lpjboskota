@@ -421,14 +421,12 @@ function drawSingleKwitansi(
   const w = 182;
   const h = 128;
 
-  // Outer double border
   doc.setDrawColor(15, 23, 42);
   doc.setLineWidth(0.5);
   doc.rect(x, topY, w, h);
   doc.setLineWidth(0.15);
   doc.rect(x + 1.2, topY + 1.2, w - 2.4, h - 2.4);
 
-  // Header strip inside kwitansi
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
   doc.setTextColor(15, 23, 42);
@@ -438,7 +436,6 @@ function drawSingleKwitansi(
   doc.setTextColor(71, 85, 105);
   doc.text(`${school.sumberDana} — Tahun Anggaran ${school.tahunAnggaran}`, x + 6, topY + 12.2);
 
-  // Metadata right corner
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
   doc.setTextColor(15, 23, 42);
@@ -449,14 +446,12 @@ function drawSingleKwitansi(
   doc.setLineWidth(0.3);
   doc.line(x + 4, topY + 19, x + w - 4, topY + 19);
 
-  // Title KWITANSI
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(12);
   doc.text('K W I T A N S I   P E M B A Y A R A N', x + w / 2, topY + 26, { align: 'center' });
   doc.setLineWidth(0.3);
   doc.line(x + 62, topY + 27.5, x + 120, topY + 27.5);
 
-  // Fields
   const labelX = x + 6;
   const colonX = x + 44;
   const valX = x + 47;
@@ -472,7 +467,6 @@ function drawSingleKwitansi(
   doc.text('Uang Sejumlah', labelX, topY + 45);
   doc.text(':', colonX, topY + 45);
 
-  // Shaded box for Terbilang
   doc.setFillColor(241, 245, 249);
   doc.setDrawColor(148, 163, 184);
   doc.rect(valX, topY + 40.5, 128, 10, 'FD');
@@ -489,7 +483,6 @@ function drawSingleKwitansi(
   const payLines = doc.splitTextToSize(pembayaranText, 127);
   doc.text(payLines, valX, topY + 57);
 
-  // Nominal Box
   doc.setFillColor(226, 232, 240);
   doc.setDrawColor(15, 23, 42);
   doc.setLineWidth(0.4);
@@ -508,7 +501,6 @@ function drawSingleKwitansi(
     );
   }
 
-  // Three-column signatures
   const sigTop = topY + 89;
   const col1 = x + 8;
   const col2 = x + 68;
@@ -583,7 +575,6 @@ function appendHonorTablesSection(
     return matchItem && matchTw;
   });
 
-  // Group by (budgetItemId + triwulan) so each Honor SPJ sheet has its own formal header & sign-off
   const groups = new Map<string, { item: BudgetItem | undefined; tw: Triwulan; rows: HonorRecipient[] }>();
   filtered.forEach((hr) => {
     const key = `${hr.budgetItemId}__${hr.triwulan}`;
@@ -743,7 +734,6 @@ export function exportCompleteLpjBundlePdf(
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const pageWidth = doc.internal.pageSize.getWidth();
 
-  // Page 1: Official Cover + SPTJM Ringkasan Realisasi
   doc.setDrawColor(30, 58, 138);
   doc.setLineWidth(1.2);
   doc.rect(12, 12, pageWidth - 24, 273);
@@ -768,7 +758,6 @@ export function exportCompleteLpjBundlePdf(
   doc.setDrawColor(148, 163, 184);
   doc.line(36, 66, pageWidth - 36, 66);
 
-  // School Metadata Table on Cover
   const totalPagu = budgetItems.reduce((s, i) => s + i.jumlah, 0);
   const filteredOut = transactions
     .filter((t) => t.jenis === 'pengeluaran' && (twFilter === 'all' || t.triwulan === twFilter))
@@ -801,7 +790,6 @@ export function exportCompleteLpjBundlePdf(
     ],
   });
 
-  // SPTJM Statement
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const sptjmY = ((doc as any).lastAutoTable?.finalY || 165) + 12;
   doc.setFont('helvetica', 'bold');
@@ -821,15 +809,12 @@ export function exportCompleteLpjBundlePdf(
 
   drawSignatureBlock(doc, school, sptjmY + 34, getReportDateForFilter(school, twFilter));
 
-  // Section 2: Landscape RKAS
   doc.addPage('a4', 'landscape');
   appendRkasSection(doc, school, budgetItems);
 
-  // Section 3: Landscape BKU
   doc.addPage('a4', 'landscape');
   appendBkuSection(doc, school, transactions, twFilter);
 
-  // Section 4: Landscape Daftar Penerimaan Honor
   const relevantHonor = honorRecipients.filter(
     (h) => twFilter === 'all' || h.triwulan === twFilter
   );
@@ -838,7 +823,6 @@ export function exportCompleteLpjBundlePdf(
     appendHonorTablesSection(doc, school, budgetItems, honorRecipients, 'all', twFilter);
   }
 
-  // Section 5: Portrait Kwitansi Pembayaran
   const relevantExpenses = transactions
     .filter((t) => t.jenis === 'pengeluaran' && (twFilter === 'all' || t.triwulan === twFilter))
     .sort((a, b) => a.tanggal.localeCompare(b.tanggal));

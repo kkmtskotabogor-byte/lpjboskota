@@ -19,13 +19,13 @@ export function parseIndonesianNumber(raw: unknown): number {
   if (!str || str === '-' || str === '—') return 0;
   // Remove currency prefixes and spaces
   const cleaned = str.replace(/rp\.?\s*/gi, '').trim();
-  // If format uses dots as thousand separators and comma for decimal (e.g. 14.076.000 or 4.620.600,00)
+  // If format uses dots as thousand separators and comma for decimal
   if (/^-?[\d.]+(,\d+)?$/.test(cleaned)) {
     const normalized = cleaned.replace(/\./g, '').replace(',', '.');
     const parsed = parseFloat(normalized);
     return Number.isFinite(parsed) ? Math.round(parsed) : 0;
   }
-  // If format uses commas as thousand separators (e.g. 14,076,000.00)
+  // If format uses commas as thousand separators
   if (/^-?[\d,]+(\.\d+)?$/.test(cleaned)) {
     const normalized = cleaned.replace(/,/g, '');
     const parsed = parseFloat(normalized);

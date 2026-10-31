@@ -58,7 +58,6 @@ export const BkuModule: React.FC<BkuModuleProps> = ({
     ppn: 0,
   });
 
-  // Sort all transactions chronologically (Penerimaan first on same date)
   const sortedAll = useMemo(() => {
     return [...transactions].sort((a, b) => {
       const cmp = a.tanggal.localeCompare(b.tanggal);
@@ -68,7 +67,6 @@ export const BkuModule: React.FC<BkuModuleProps> = ({
     });
   }, [transactions]);
 
-  // Compute opening balance prior to selected Triwulan
   const openingBalance = useMemo(() => {
     if (twFilter === 'all') return 0;
     return sortedAll
@@ -76,7 +74,6 @@ export const BkuModule: React.FC<BkuModuleProps> = ({
       .reduce((acc, t) => acc + (t.jenis === 'penerimaan' ? t.nominal : -t.nominal), 0);
   }, [sortedAll, twFilter]);
 
-  // Build rows with accurate running balance before search/jenis filter
   const periodLedgerRows = useMemo(() => {
     const base =
       twFilter === 'all' ? sortedAll : sortedAll.filter((t) => t.triwulan === twFilter);
@@ -168,7 +165,6 @@ export const BkuModule: React.FC<BkuModuleProps> = ({
     setEditingTx(null);
   };
 
-  // Helper to show remaining Pagu for selected budgetItem + Triwulan inside form
   const selectedItemInfo = useMemo(() => {
     if (formState.jenis !== 'pengeluaran' || !formState.budgetItemId) return null;
     const item = budgetItems.find((b) => b.id === formState.budgetItemId);
@@ -189,7 +185,6 @@ export const BkuModule: React.FC<BkuModuleProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pb-5 border-b border-slate-200">
         <div>
           <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
@@ -221,7 +216,6 @@ export const BkuModule: React.FC<BkuModuleProps> = ({
         </div>
       </div>
 
-      {/* Summary Strip */}
       <div className="bg-white border border-slate-200 rounded-xl grid grid-cols-1 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200">
         <div className="p-4">
           <div className="text-xs text-slate-500">Saldo Awal Periode</div>
@@ -253,7 +247,6 @@ export const BkuModule: React.FC<BkuModuleProps> = ({
         </div>
       </div>
 
-      {/* Add / Edit Transaction Form */}
       {isFormOpen && (
         <form
           onSubmit={handleSubmit}
@@ -469,7 +462,6 @@ export const BkuModule: React.FC<BkuModuleProps> = ({
         </form>
       )}
 
-      {/* Filter Toolbar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex items-center gap-1 p-1 bg-slate-200/70 rounded-lg">
@@ -525,7 +517,6 @@ export const BkuModule: React.FC<BkuModuleProps> = ({
         </div>
       </div>
 
-      {/* Ledger Table */}
       <section className="bg-white border border-slate-200 rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-xs border-collapse">
